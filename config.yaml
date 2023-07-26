@@ -1,0 +1,61 @@
+app:
+  name: "web_app"
+  #三种启动模式：debug,release,test
+  start_mode: "debug"
+  version: "1.0"
+  port: 8081
+
+locale:
+  locale: "zh"
+
+
+auth:
+  access_token_expire: 900  #单位：秒
+  refresh_token_expire: 36 #单位：小时
+
+snowflake:
+  location: "Asia/Shanghai"
+  starttime: "2023-05-28"
+  centerId: 1
+  workerId: 1
+
+log:
+  #两种日志模式:dev,product
+  mode: "dev"
+  level: "debug"
+  filename: "web_app.log"
+  max_size: 200
+  max_age: 30
+  max_backups: 7
+
+mysql:
+  host: "127.0.0.1"
+  port: 3306
+  user: "devops"
+  password: "Sino99sino#"
+  dbname: "devops"
+  mysqlquery: parseTime=True&loc=Local&timeout=10000ms
+  mysqlcharset: utf8mb4
+  mysqlcollation: utf8mb4_general_ci
+  mysqlmaxidleconns: 10
+  mysqlmaxopenconns: 100
+  mysqlconnmaxlifetime: 30
+
+redis:
+  host: "172.17.218.44:6379"
+  db: 0
+  user: "redis"
+  password: "password"
+
+
+postgresql:
+  host: "127.0.0.1"
+  port: 5432
+  user: "engine"
+  password: "password"
+  dbname: "engine"
+  timezone: "Asia/Shanghai"
+  pgmaxidleconns: 10
+  pgmaxopenconns: 15
+  pgconnmaxlifetime: 15
+  pgprestatement: "true"
