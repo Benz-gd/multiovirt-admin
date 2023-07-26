@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"example/fundemo01/web-app/settings"
 	"fmt"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/locales/en"
@@ -10,6 +9,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	enTranslations "github.com/go-playground/validator/v10/translations/en"
 	zhTranslations "github.com/go-playground/validator/v10/translations/zh"
+	"multiovirt-admin/settings"
 	"reflect"
 	"strings"
 )
@@ -20,7 +20,7 @@ var trans ut.Translator
 // InitTrans 初始化翻译器
 func Init(cfg *settings.Locale) (err error) {
 
-	fmt.Printf("本地化:%s\n",cfg.Locale)
+	fmt.Printf("本地化:%s\n", cfg.Locale)
 	// 修改gin框架中的Validator引擎属性，实现自定制
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
 		// 注册一个获取json tag的自定义方法

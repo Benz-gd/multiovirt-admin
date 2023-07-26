@@ -1,12 +1,12 @@
 package logger
 
 import (
-	"example/fundemo01/web-app/settings"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
+	"multiovirt-admin/settings"
 	"net"
 	"net/http"
 	"net/http/httputil"
@@ -16,9 +16,7 @@ import (
 	"time"
 )
 
-
-
-func Init(cfg *settings.LogConfig) (err error){
+func Init(cfg *settings.LogConfig) (err error) {
 	//filename := viper.GetString("log.filename")
 	//maxSize := viper.GetInt("log.max_size")
 	//maxBackup := viper.GetInt("log.maxBackup")
@@ -42,8 +40,8 @@ func Init(cfg *settings.LogConfig) (err error){
 	case "dev":
 		devEncoder := zapcore.NewConsoleEncoder(zap.NewDevelopmentEncoderConfig())
 		core = zapcore.NewTee(
-			zapcore.NewCore(devEncoder,writeSyncer,lev),
-			zapcore.NewCore(devEncoder,zapcore.Lock(os.Stdout),zap.DebugLevel),
+			zapcore.NewCore(devEncoder, writeSyncer, lev),
+			zapcore.NewCore(devEncoder, zapcore.Lock(os.Stdout), zap.DebugLevel),
 		)
 	case "product":
 		encoderConfig := zap.NewProductionEncoderConfig()
@@ -54,26 +52,26 @@ func Init(cfg *settings.LogConfig) (err error){
 		encoderConfig.EncodeCaller = zapcore.ShortCallerEncoder
 		prodEncoder := zapcore.NewConsoleEncoder(encoderConfig)
 		core = zapcore.NewTee(
-			zapcore.NewCore(prodEncoder,writeSyncer,lev),
+			zapcore.NewCore(prodEncoder, writeSyncer, lev),
 		)
 	}
-	log := zap.New(core,zap.AddCaller())
+	log := zap.New(core, zap.AddCaller())
 	zap.ReplaceGlobals(log)
 	return
 }
 
-func getLogWriter(filename string, maxSize, maxBackup, maxAge int) zapcore.WriteSyncer{
+func getLogWriter(filename string, maxSize, maxBackup, maxAge int) zapcore.WriteSyncer {
 	lumberJackLogger := &lumberjack.Logger{
-		Filename: filename,
-		MaxSize: maxSize,
+		Filename:   filename,
+		MaxSize:    maxSize,
 		MaxBackups: maxBackup,
-		MaxAge: maxAge,
+		MaxAge:     maxAge,
 	}
 	return zapcore.AddSync(lumberJackLogger)
 }
 
-func GinLogger() gin.HandlerFunc{
-	return func(c *gin.Context){
+func GinLogger() gin.HandlerFunc {
+	return func(c *gin.Context) {
 		start := time.Now()
 		path := c.Request.URL.Path
 		query := c.Request.URL.RawQuery

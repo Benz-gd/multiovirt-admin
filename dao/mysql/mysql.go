@@ -1,19 +1,19 @@
 package mysql
 
 import (
-	"example/fundemo01/web-app/settings"
 	"fmt"
 	"go.uber.org/zap"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
+	"multiovirt-admin/settings"
 	"time"
 )
 
 var Mysql *gorm.DB
 
-func  Init(cfg *settings.MySQLConfig) (*gorm.DB,error) {
+func Init(cfg *settings.MySQLConfig) (*gorm.DB, error) {
 	//dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=%s&collation=%s&%s",
 	//	viper.GetString("mysql.user"),
 	//	viper.GetString("mysql.password"),
@@ -42,21 +42,21 @@ func  Init(cfg *settings.MySQLConfig) (*gorm.DB,error) {
 		DisableForeignKeyConstraintWhenMigrating: true,
 	})
 	if err != nil {
-		zap.L().Error("func initMysqlClient: ",zap.Error(err))
-		return nil,err
+		zap.L().Error("func initMysqlClient: ", zap.Error(err))
+		return nil, err
 	}
 
-	sqlDB,_ := Mysql.DB()
+	sqlDB, _ := Mysql.DB()
 	sqlDB.SetMaxIdleConns(cfg.MysqlMaxIdelConns)
 	sqlDB.SetMaxOpenConns(cfg.MysqlMaxOpenConns)
 	sqlDB.SetConnMaxLifetime(time.Duration(cfg.MysqlConnMaxLifetime) * time.Minute)
-	return Mysql,nil
+	return Mysql, nil
 }
 
-func  DBClose(){
-	sqlDB,err := Mysql.DB()
+func DBClose() {
+	sqlDB, err := Mysql.DB()
 	if err != nil {
-		zap.L().Error("func DBClose: ",zap.Error(err))
+		zap.L().Error("func DBClose: ", zap.Error(err))
 	}
 	sqlDB.Close()
 }
