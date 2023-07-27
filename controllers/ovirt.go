@@ -26,13 +26,13 @@ func CreateOvirtConf(c *gin.Context) {
 	}
 	//2、检查参数是否在数据库存在
 	if err := logic.CheckOvirtDBConf(ovirt); err != nil {
-		ResponseError(c, CodeOvirtConfExist)
+		ResponseError(c, CodeDataOperationErr)
 		return
 	}
 	//3、插入数据进入数据库
 	rowAffected, err := logic.InsterOvirtDBConf(ovirt)
 	if err != nil {
-		ResponseError(c, CodeInsertDBErr)
+		ResponseError(c, CodeDataOperationErr)
 		return
 	}
 	//3、返回响应

@@ -1,62 +1,51 @@
 package controllers
 
-
-const(
-	CodeNoRoute = 404
-	CodeInvalidParam = 4000 +iota
-	CodeUserExist
-	CodeUserNotExist
-	CodeRegisterFail
+const (
+	CodeNoRoute      = 404
+	CodeServerBusy   = 500
+	CodeInvalidParam = 4000 + iota
+	CodeUserErr
 	CodeInvalidPassword
-	CodeServerBusy
-	CodeAuthNotExist
-	CodeAuthFormatErr
-	CodeAuthInvalidToken
 	CodeUserNotLogin
-	CodeOvirtConfExist
+	CodeRegisterFail
+	CodeAuthInvalidToken
 	CodeDataOperationErr
-	CodeInsertDBErr
 )
+
 var ErrCodeMsgMap = map[int]string{
-	CodeNoRoute: "网页找不到",
-	CodeInvalidParam: "请求参数错误",
-	CodeUserExist: "用户已存在",
-	CodeUserNotExist: "用户不存在",
-	CodeRegisterFail: "注册失败",
-	CodeInvalidPassword: "用户名或密码错误",
-	CodeServerBusy: "服务繁忙",
-	CodeAuthNotExist: "请求头Auth为空",
-	CodeAuthFormatErr: "请求头中Auth格式有误",
+	CodeNoRoute:          "网页找不到",
+	CodeServerBusy:       "服务繁忙",
+	CodeInvalidParam:     "请求参数错误",
+	CodeUserErr:          "用户信息错误",
+	CodeInvalidPassword:  "用户名或密码错误",
+	CodeUserNotLogin:     "用户未登录",
+	CodeRegisterFail:     "注册失败",
 	CodeAuthInvalidToken: "无效Token",
-	CodeUserNotLogin: "用户未登录",
-	CodeOvirtConfExist:"数据库配置已存在",
-	CodeDataOperationErr:"数据操作错误",
-	CodeInsertDBErr:"插入数据错误",
+	CodeDataOperationErr: "数据操作错误",
 }
 
-const(
+const (
 	CodeLoginSuccess = 2000 + iota
-	CodeResponseSuccess
 	CodeRegisterSuccess
+	CodeResponseSuccess
 	CodeDataOperationSuccess
 )
+
 var SucCodeMsgMap = map[int]string{
-	CodeLoginSuccess: "登录成功",
-	CodeRegisterSuccess: "注册成功",
-	CodeResponseSuccess: "Success",
+	CodeLoginSuccess:         "登录成功",
+	CodeRegisterSuccess:      "注册成功",
+	CodeResponseSuccess:      "Success",
 	CodeDataOperationSuccess: "数据操作成功",
 }
 
-
-func GetErrMsg(code int) string{
-	msg,ok := ErrCodeMsgMap[code]
-	if ! ok {
+func GetErrMsg(code int) string {
+	msg, ok := ErrCodeMsgMap[code]
+	if !ok {
 		msg = ErrCodeMsgMap[CodeServerBusy]
 	}
 	return msg
 }
 
-
-func GetSucMsg(code int) string{
-	return  SucCodeMsgMap[code]
+func GetSucMsg(code int) string {
+	return SucCodeMsgMap[code]
 }
