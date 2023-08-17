@@ -24,7 +24,6 @@ func Init(cfg *settings.MySQLConfig) (*gorm.DB, error) {
 	//	viper.GetString("mysql.mysqlcollation"),
 	//	viper.GetString("mysql.mysqlquery"),
 	//)
-	var err error
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=%s&collation=%s&%s",
 		cfg.User,
 		cfg.Password,
@@ -36,6 +35,7 @@ func Init(cfg *settings.MySQLConfig) (*gorm.DB, error) {
 		cfg.MysqlQuery,
 	)
 	//fmt.Printf("dsn is:%s\n",dsn)
+	var err error
 	Mysql, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
 		Logger:                                   logger.Default.LogMode(logger.Info),
 		NamingStrategy:                           schema.NamingStrategy{SingularTable: true},
