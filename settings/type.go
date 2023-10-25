@@ -14,6 +14,7 @@ type AppConfig struct {
 	RedisConfig      *RedisConfig      `mapstructure:"redis"`
 	AuthConfig       *Auth             `mapstructure:"auth"`
 	PostgreSQLConfig *PostgreSQLConfig `mapstructure:"postgresql"`
+	ZabbixConfig     *ZabbixConfig     `mapstructure:"zabbix"`
 }
 
 type Auth struct {
@@ -72,4 +73,10 @@ type PostgreSQLConfig struct {
 	PGMaxOpenConns    int    `mapstructure:"pgmaxopenconns"`
 	PGConnMaxLifetime int    `mapstructure:"pgconnmaxlifetime"`
 	PGPreStatement    string `mapstructure:"pgprestatement"`
+}
+
+type ZabbixConfig struct {
+	Url      string `mapstructure:"url"`
+	User     string `mapstructure:"user"`
+	Password string `mapstructure:"password"`
 }

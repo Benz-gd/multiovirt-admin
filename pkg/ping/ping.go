@@ -3,7 +3,6 @@ package ping
 import (
 	"bytes"
 	"encoding/binary"
-	"fmt"
 	"github.com/go-ping/ping"
 	"net"
 	"strconv"
@@ -25,29 +24,44 @@ func back2IP(ipInt int64) string {
 	return addrs
 }
 
-func worker(addr chan string, wg *sync.WaitGroup) {
+func worker(addr chan string, result chan map[string]string, wg *sync.WaitGroup) {
 	for a := range addr {
-		pinger, err := ping.NewPinger(a)
+		pinging, err := ping.NewPinger(a)
 		if err != nil {
-			fmt.Printf("%s not correct!\n", a)
+			fping := map[string]string{
+				a: "unavailable",
+			}
+			//fmt.Printf("%s not correct!\n", a)
+			result <- fping
 		}
-		pinger.SetPrivileged(true)
-		pinger.Count = 2
-		err = pinger.Run()
+		pinging.SetPrivileged(true)
+		pinging.Count = 3
+		err = pinging.Run()
 		if err != nil {
-			fmt.Printf("%s not connect!\n", a)
+			fping := map[string]string{
+				a: "pong",
+			}
+			//fmt.Printf("%s not correct!\n", a)
+			result <- fping
+		} else {
+			sping := map[string]string{
+				a: "unavailable",
+			}
+			result <- sping
 		}
 	}
 	wg.Done()
 }
 
-func pinger(start_addrs string, end_addrs string) {
+func Pinger(start_addrs string, end_addrs string) map[string]string {
+	result := make(chan map[string]string)
+	results := make(map[string]string)
 	startip := ip2Long(start_addrs)
 	endip := ip2Long(end_addrs)
 	addrs := make(chan string, 100)
 	var wg sync.WaitGroup
 	for i := 0; i < cap(addrs); i++ {
-		go worker(addrs, &wg)
+		go worker(addrs, result, &wg)
 	}
 	for i := startip; i <= endip; i++ {
 		wg.Add(1)
@@ -56,4 +70,11 @@ func pinger(start_addrs string, end_addrs string) {
 	}
 	wg.Wait()
 	close(addrs)
+	close(result)
+	for val := range result {
+		for k, v := range val {
+			results[k] = v
+		}
+	}
+	return results
 }
