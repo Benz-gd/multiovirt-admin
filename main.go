@@ -11,6 +11,7 @@ import (
 	"multiovirt-admin/dao/redis"
 	"multiovirt-admin/logger"
 	"multiovirt-admin/pkg/snowflake"
+	"multiovirt-admin/pkg/zabbix"
 	"multiovirt-admin/routes"
 	"multiovirt-admin/settings"
 	"net/http"
@@ -71,7 +72,12 @@ func main() {
 	} else {
 		fmt.Println("initial snowflake success!")
 	}
-
+	//6、 初始化zabbix客户端
+	if _, err := zabbix.InitZabbix(settings.Conf.ZabbixConfig); err != nil {
+		fmt.Printf("initial zabbix err:%v\n", err)
+	} else {
+		fmt.Println("initial zabbix success!")
+	}
 	//6、初始化validator
 	if err := controllers.Init(settings.Conf.Locale); err != nil {
 		zap.L().Error("init trans error", zap.Error(err))
