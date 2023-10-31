@@ -24,6 +24,13 @@ type ZabbixAPI struct {
 }
 
 func InitZabbix(cfg *settings.ZabbixConfig) (*ZabbixAPI, error) {
+	tr := &http.Client{
+		Transport: &http.Transport{
+			MaxIdleConns:        10,               // 控制最大空闲连接数
+			MaxIdleConnsPerHost: 10,               // 控制每个目标主机的最大空闲连接数
+			IdleConnTimeout:     30 * time.Second, // 控制空闲连接的超时时间
+		},
+	}
 	zc, err := NewZabbixClient(cfg.Url, cfg.User, cfg.Password)
 	if err != nil {
 		fmt.Println("NewZabbixClient error!")
@@ -33,26 +40,23 @@ func InitZabbix(cfg *settings.ZabbixConfig) (*ZabbixAPI, error) {
 		return nil, nil
 	}
 	return &ZabbixAPI{
-		zabbixclient: zc.zabbixclient,
-		auth:         auth,
+		zabbixclient: &ZabbixClient{
+			url:      zc.zabbixclient.url,
+			username: zc.zabbixclient.username,
+			password: zc.zabbixclient.password,
+			client:   tr,
+		}, auth: auth,
 	}, nil
 }
 
 func NewZabbixClient(url string, username string, password string) (*ZabbixAPI, error) {
-	tr := &http.Client{
-		Transport: &http.Transport{
-			MaxIdleConns:        10,               // 控制最大空闲连接数
-			MaxIdleConnsPerHost: 10,               // 控制每个目标主机的最大空闲连接数
-			IdleConnTimeout:     30 * time.Second, // 控制空闲连接的超时时间
-		},
-	}
+
 	if url != "" && username != "" && password != "" {
 		return &ZabbixAPI{
 			zabbixclient: &ZabbixClient{
 				url:      url,
 				username: username,
 				password: password,
-				client:   tr,
 			},
 		}, nil
 	}
@@ -75,7 +79,7 @@ func (z *ZabbixAPI) authenticate() (string, error) {
 		zap.L().Error("zabbix authenticate jsonData error!", zap.Error(err))
 		return "", err
 	}
-	resp, err := z.zabbixclient.client.Post(z.zabbixclient.url, "application/json-rpc", bytes.NewBuffer(jsonData))
+	resp, err := http.Post(z.zabbixclient.url, "application/json-rpc", bytes.NewBuffer(jsonData))
 	if err != nil {
 		zap.L().Error("zabbixclient Post error!", zap.Error(err))
 		return "", err
@@ -83,9 +87,22 @@ func (z *ZabbixAPI) authenticate() (string, error) {
 	defer resp.Body.Close()
 	var authResponse map[string]interface{}
 	err = json.NewDecoder(resp.Body).Decode(&authResponse)
-	if err != nil {
-		zap.L().Error("zabbixclient authenticate json.NewDecoder error!", zap.Error(err))
-		return "", err
+	//if authResponse["error"].(string) != ""{
+	//	fmt.Printf("authresponse error is %s\n",authResponse["error"].(string))
+	//}
+	//fmt.Println(authResponse)
+	for key, value := range authResponse {
+		if key == "error" {
+			//zap.L().Error("zabbixclient authenticate json.NewDecoder",zap.String("error is ",value.(string)))
+			fmt.Println(authResponse)
+			return "", errors.New(value.(string))
+		}
 	}
+	//if err != nil {
+	//	zap.L().Error("zabbixclient authenticate json.NewDecoder error!", zap.Error(err))
+	//	return "", err
+	//}
+
 	return authResponse["result"].(string), nil
+
 }
