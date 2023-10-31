@@ -65,7 +65,7 @@ func (z *ZabbixAPI) authenticate() (string, error) {
 		"jsonrpc": "2.0",
 		"method":  "user.login",
 		"params": map[string]string{
-			"user":     z.zabbixclient.username,
+			"username": z.zabbixclient.username,
 			"password": z.zabbixclient.password,
 		},
 		"id": 1,
