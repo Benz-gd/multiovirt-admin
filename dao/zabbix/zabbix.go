@@ -76,7 +76,7 @@ func (z *ZabbixAPI) authenticate() (string, error) {
 	}
 	jsonData, err := json.Marshal(authRequest)
 	if err != nil {
-		zap.L().Error("zabbix authenticate jsonData error!", zap.Error(err))
+		zap.L().Error("", zap.Error(err))
 		return "", err
 	}
 	resp, err := http.Post(z.zabbixclient.url, "application/json-rpc", bytes.NewBuffer(jsonData))
@@ -87,22 +87,24 @@ func (z *ZabbixAPI) authenticate() (string, error) {
 	defer resp.Body.Close()
 	var authResponse map[string]interface{}
 	err = json.NewDecoder(resp.Body).Decode(&authResponse)
-	//if authResponse["error"].(string) != ""{
-	//	fmt.Printf("authresponse error is %s\n",authResponse["error"].(string))
-	//}
-	//fmt.Println(authResponse)
-	for key, value := range authResponse {
-		if key == "error" {
-			//zap.L().Error("zabbixclient authenticate json.NewDecoder",zap.String("error is ",value.(string)))
-			fmt.Println(authResponse)
-			return "", errors.New(value.(string))
+	if authResponse["error"] != nil {
+		errorMap, ok := authResponse["error"].(map[string]interface{})
+		if ok {
+			dataValue, ok := errorMap["data"].(string)
+			if ok {
+				zap.L().Error(dataValue)
+			} else {
+				zap.L().Error("authResponse error not string!")
+			}
+		} else {
+			zap.L().Error("authResponse error not map!")
 		}
 	}
-	//if err != nil {
-	//	zap.L().Error("zabbixclient authenticate json.NewDecoder error!", zap.Error(err))
-	//	return "", err
-	//}
 
+	resultValue, resultExists := authResponse["result"]
+	if !resultExists || resultValue == nil {
+		return "", errors.New("result is nil or does not exist")
+	}
 	return authResponse["result"].(string), nil
 
 }
