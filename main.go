@@ -43,7 +43,7 @@ func main() {
 	if _, err := mysql.Init(settings.Conf.MySQLConfig); err != nil {
 		fmt.Printf("initial mysql error: %v\n", err)
 		zap.L().Error("init mysql error!", zap.Error(err))
-		return
+		//return
 	} else {
 		zap.L().Info("mysql init success!")
 	}

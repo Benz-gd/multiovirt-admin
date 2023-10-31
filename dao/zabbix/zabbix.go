@@ -33,13 +33,12 @@ func InitZabbix(cfg *settings.ZabbixConfig) (*ZabbixAPI, error) {
 		return nil, nil
 	}
 	return &ZabbixAPI{
-		zabbixclient: zc,
+		zabbixclient: zc.zabbixclient,
 		auth:         auth,
 	}, nil
-	//return NewZabbixClient(cfg.Url, cfg.User, cfg.Password)
 }
 
-func NewZabbixClient(url string, username string, password string) (*ZabbixClient, error) {
+func NewZabbixClient(url string, username string, password string) (*ZabbixAPI, error) {
 	tr := &http.Client{
 		Transport: &http.Transport{
 			MaxIdleConns:        10,               // 控制最大空闲连接数
@@ -48,24 +47,26 @@ func NewZabbixClient(url string, username string, password string) (*ZabbixClien
 		},
 	}
 	if url != "" && username != "" && password != "" {
-		return &ZabbixClient{
-			url:      url,
-			username: username,
-			password: password,
-			client:   tr,
+		return &ZabbixAPI{
+			zabbixclient: &ZabbixClient{
+				url:      url,
+				username: username,
+				password: password,
+				client:   tr,
+			},
 		}, nil
 	}
 	zap.L().Error("Input parameter error! Please config url,username,password!")
 	return nil, errors.New("Input parameter error!")
 }
 
-func (z *ZabbixClient) authenticate() (string, error) {
+func (z *ZabbixAPI) authenticate() (string, error) {
 	authRequest := map[string]interface{}{
 		"jsonrpc": "2.0",
 		"method":  "user.login",
 		"params": map[string]string{
-			"user":     z.username,
-			"password": z.password,
+			"user":     z.zabbixclient.username,
+			"password": z.zabbixclient.password,
 		},
 		"id": 1,
 	}
@@ -74,7 +75,7 @@ func (z *ZabbixClient) authenticate() (string, error) {
 		zap.L().Error("zabbix authenticate jsonData error!", zap.Error(err))
 		return "", err
 	}
-	resp, err := z.client.Post(z.url, "application/json-rpc", bytes.NewBuffer(jsonData))
+	resp, err := z.zabbixclient.client.Post(z.zabbixclient.url, "application/json-rpc", bytes.NewBuffer(jsonData))
 	if err != nil {
 		zap.L().Error("zabbixclient Post error!", zap.Error(err))
 		return "", err
@@ -86,6 +87,5 @@ func (z *ZabbixClient) authenticate() (string, error) {
 		zap.L().Error("zabbixclient authenticate json.NewDecoder error!", zap.Error(err))
 		return "", err
 	}
-	//z.auth = authResponse["result"].(string)
 	return authResponse["result"].(string), nil
 }
