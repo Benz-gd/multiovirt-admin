@@ -11,6 +11,8 @@ import (
 	"time"
 )
 
+var Zabbix *ZabbixAPI
+
 type ZabbixClient struct {
 	url      string
 	username string
