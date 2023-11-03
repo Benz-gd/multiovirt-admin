@@ -23,6 +23,7 @@ func InitRoutes() *gin.Engine {
 	base := r.Group("/api/base")
 	ovirt := r.Group("/api/ovirt")
 	tools := r.Group("/api/tools")
+	zabbix := r.Group("/api/zabbix")
 	//base 基础组件路由
 	base.POST("/signup", controllers.SignUpHandler)
 	base.POST("/login", controllers.LoginHandler)
@@ -39,9 +40,12 @@ func InitRoutes() *gin.Engine {
 
 	tools.Use(middleware.JwtAuthMiddleware())
 	{
-		base.GET("/ping", controllers.Ping)
+		tools.GET("/ping", controllers.Ping)
 	}
-
+	zabbix.Use(middleware.JwtAuthMiddleware())
+	{
+		zabbix.GET("/listhostgroup", controllers.ListHostGroup)
+	}
 	r.NoRoute(func(c *gin.Context) {
 		controllers.ResponseError(c, controllers.CodeNoRoute)
 	})
