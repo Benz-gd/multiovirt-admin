@@ -13,7 +13,7 @@ import (
 
 var Mysql *gorm.DB
 
-func Init(cfg *settings.MySQLConfig) (*gorm.DB, error) {
+func Init(cfg *settings.MySQLBase) (*gorm.DB, error) {
 	//dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=%s&collation=%s&%s",
 	//	viper.GetString("mysql.user"),
 	//	viper.GetString("mysql.password"),

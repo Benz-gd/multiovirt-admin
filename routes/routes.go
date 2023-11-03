@@ -43,10 +43,10 @@ func InitRoutes() *gin.Engine {
 		tools.GET("/ping", controllers.Ping)
 	}
 
-	cmdb.Use(middleware.JwtAuthMiddleware())
-	{
-		cmdb.GET("/listhostgroup", controllers.ListHostGroup)
-	}
+	//cmdb.Use(middleware.JwtAuthMiddleware())
+	//{
+	cmdb.GET("/listhostgroup", controllers.ListHostGroup)
+	//}
 	r.NoRoute(func(c *gin.Context) {
 		controllers.ResponseError(c, controllers.CodeNoRoute)
 	})

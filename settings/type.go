@@ -10,11 +10,12 @@ type AppConfig struct {
 	Locale           *Locale           `mapstructure:"locale"`
 	SnowFlake        *SnowFlake        `mapstructure:"snowflake"`
 	LogConfig        *LogConfig        `mapstructure:"log"`
-	MySQLConfig      *MySQLConfig      `mapstructure:"mysql"`
+	MySQLBase        *MySQLBase        `mapstructure:"mysqlbase"`
 	RedisConfig      *RedisConfig      `mapstructure:"redis"`
 	AuthConfig       *Auth             `mapstructure:"auth"`
 	PostgreSQLConfig *PostgreSQLConfig `mapstructure:"postgresql"`
-	ZabbixConfig     *ZabbixConfig     `mapstructure:"zabbix"`
+	MySQLCMDB
+	ZabbixConfig *ZabbixConfig `mapstructure:"zabbix"`
 }
 
 type Auth struct {
@@ -41,7 +42,7 @@ type LogConfig struct {
 	MaxBackups int    `mapstructure:"max_backups"`
 }
 
-type MySQLConfig struct {
+type MySQLBase struct {
 	Host                 string `mapstructure:"host"`
 	Port                 int    `mapstructure:"port"`
 	User                 string `mapstructure:"user"`
@@ -79,4 +80,18 @@ type ZabbixConfig struct {
 	Url      string `mapstructure:"url"`
 	User     string `mapstructure:"user"`
 	Password string `mapstructure:"password"`
+}
+
+type MySQLCMDB struct {
+	Host                 string `mapstructure:"host"`
+	Port                 int    `mapstructure:"port"`
+	User                 string `mapstructure:"user"`
+	Password             string `mapstructure:"password"`
+	DBName               string `mapstructure:"dbname"`
+	MysqlQuery           string `mapstructure:"mysqlquery"`
+	MysqlCharset         string `mapstructure:"mysqlcharset"`
+	MysqlCollation       string `mapstructure:"mysqlcollation"`
+	MysqlMaxIdelConns    int    `mapstructure:"mysqlmaxidleconns"`
+	MysqlMaxOpenConns    int    `mapstructure:"mysqlmaxopenconns"`
+	MysqlConnMaxLifetime int    `mapstructure:"mysqlconnmaxlifetime"`
 }
