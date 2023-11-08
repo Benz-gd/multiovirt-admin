@@ -32,7 +32,7 @@ mysqlbase:
   host: "127.0.0.1"
   port: 3306
   user: "devops"
-  password: "Sino99sino#"
+  password: "xxxxxx"
   dbname: "devops"
   mysqlquery: parseTime=True&loc=Local&timeout=10000ms
   mysqlcharset: utf8mb4
@@ -63,14 +63,14 @@ postgresql:
 zabbix:
   url: "http://192.168.6.10:8080/api_jsonrpc.php"
   user: "zabbix-api"
-  password: "sino99sino"
+  password: "xxxxxx"
 
 
 mysqlcmdb:
   host: "192.168.6.10"
   port: 3306
   user: "cmdbopr"
-  password: "sino99sino#"
+  password: "xxxxxx"
   dbname: "cmdb"
   mysqlquery: parseTime=True&loc=Local&timeout=10000ms
   mysqlcharset: utf8mb4
