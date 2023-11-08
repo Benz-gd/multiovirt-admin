@@ -9,7 +9,7 @@ import (
 
 func GetCommunityList() ([]*models.CommunityList, error) {
 	var communityList []*models.CommunityList
-	result := Mysql.Find(&communityList)
+	result := MysqlBase.Find(&communityList)
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		zap.L().Warn("GetCommunityList Record Not Found!", zap.Error(result.Error))
 		return nil, result.Error
@@ -19,7 +19,7 @@ func GetCommunityList() ([]*models.CommunityList, error) {
 
 func GetCommunityDetail(id int) ([]*models.CommunityDetail, error) {
 	var communityDetail []*models.CommunityDetail
-	result := Mysql.Raw("select community_id,community_name,introduction,create_time from community where community_id = ?", id).Scan(&communityDetail)
+	result := MysqlBase.Raw("select community_id,community_name,introduction,create_time from community where community_id = ?", id).Scan(&communityDetail)
 	if result.Error != nil {
 		zap.L().Error("GetCommunityDetail Error!")
 		return nil, result.Error
