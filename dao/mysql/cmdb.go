@@ -7,7 +7,7 @@ import (
 )
 
 func ListHostGroup() (listhostgroup []*models.ListHostGroup, err error) {
-	result := Mysql.Raw("select groupid,groupname,status,description,createdby,modifiedby,createdon,modifiedon from ListHostGroup").Scan(&listhostgroup)
+	result := MysqlCMDB.Raw("select groupid,groupname,status,description,createdby,modifiedby,createdon,modifiedon from ListHostGroup").Scan(&listhostgroup)
 	if result.Error != nil {
 		zap.L().Error("ListHostGroup Error!")
 		return nil, result.Error

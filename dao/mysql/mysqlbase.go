@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-var Mysql *gorm.DB
+var MysqlBase *gorm.DB
 
 func Init(cfg *settings.MySQLBase) (*gorm.DB, error) {
 	//dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=%s&collation=%s&%s",
@@ -36,7 +36,7 @@ func Init(cfg *settings.MySQLBase) (*gorm.DB, error) {
 	)
 	//fmt.Printf("dsn is:%s\n",dsn)
 	var err error
-	Mysql, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
+	MysqlBase, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
 		Logger:                                   logger.Default.LogMode(logger.Info),
 		NamingStrategy:                           schema.NamingStrategy{SingularTable: true},
 		DisableForeignKeyConstraintWhenMigrating: true,
@@ -46,15 +46,15 @@ func Init(cfg *settings.MySQLBase) (*gorm.DB, error) {
 		return nil, err
 	}
 
-	sqlDB, _ := Mysql.DB()
+	sqlDB, _ := MysqlBase.DB()
 	sqlDB.SetMaxIdleConns(cfg.MysqlMaxIdelConns)
 	sqlDB.SetMaxOpenConns(cfg.MysqlMaxOpenConns)
 	sqlDB.SetConnMaxLifetime(time.Duration(cfg.MysqlConnMaxLifetime) * time.Minute)
-	return Mysql, nil
+	return MysqlBase, nil
 }
 
 func DBClose() {
-	sqlDB, err := Mysql.DB()
+	sqlDB, err := MysqlBase.DB()
 	if err != nil {
 		zap.L().Error("func DBClose: ", zap.Error(err))
 	}

@@ -66,6 +66,16 @@ func main() {
 	}
 	defer postgresql.DBClose()
 
+	//6、初始化业务数据库
+	if _, err := mysql.InitCMDB(settings.Conf.MySQLCMDB); err != nil {
+		fmt.Printf("initial mysql error: %v\n", err)
+		zap.L().Error("init mysqlcmdb error!", zap.Error(err))
+		//return
+	} else {
+		zap.L().Info("mysqlcmdb init success!")
+	}
+	defer mysql.DBCloseMysqlCMDB()
+
 	//5、初始化用户ID
 	if _, err := snowflake.Init(settings.Conf.SnowFlake); err != nil {
 		fmt.Printf("initial snowflake error: %v\n", err)

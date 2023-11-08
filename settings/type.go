@@ -14,8 +14,8 @@ type AppConfig struct {
 	RedisConfig      *RedisConfig      `mapstructure:"redis"`
 	AuthConfig       *Auth             `mapstructure:"auth"`
 	PostgreSQLConfig *PostgreSQLConfig `mapstructure:"postgresql"`
-	MySQLCMDB
-	ZabbixConfig *ZabbixConfig `mapstructure:"zabbix"`
+	MySQLCMDB        *MySQLCMDB        `mapstructure:"mysqlcmdb"`
+	ZabbixConfig     *ZabbixConfig     `mapstructure:"zabbix"`
 }
 
 type Auth struct {
